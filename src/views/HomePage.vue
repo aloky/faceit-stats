@@ -1,27 +1,27 @@
 <template>
-  <form class="content" @submit.prevent="getInfo">
-    <div class="container flex flex-between">
-      <at-input
-        v-model="nickname"
-        size="large"
-        placeholder="Type nickname"
-        class="search-input"
-        required
-      />
-      <at-button
-        nativeType="submit"
-        :disabled="!nickname.length"
-      >
-        Get Stats
-      </at-button>
-    </div>
+	<form class="content" @submit.prevent="getInfo">
+		<div class="container flex flex-between">
+			<at-input
+				v-model="nickname"
+				size="large"
+				placeholder="Type nickname"
+				class="search-input"
+				required
+			/>
+			<at-button
+				nativeType="submit"
+				:disabled="!nickname.length"
+			>
+				Get Stats
+			</at-button>
+		</div>
 		<player-stats
-      v-if="player && playerStats && historyMatches"
-      :player="player"
-      :player-stats="playerStats"
-      :history-matches="historyMatches"
-    />
-  </form>
+			v-if="player && playerStats && historyMatches"
+			:player="player"
+			:player-stats="playerStats"
+			:history-matches="historyMatches"
+		/>
+	</form>
 </template>
 
 <script>
@@ -36,27 +36,26 @@ export default {
 	components: {
 		PlayerStats
 	},
-  data () {
-    return {
-      nickname: '',
-      player: null,
-      playerStats: null,
-      historyMatches: []
-    }
-  },
-  methods: {
-    getInfo () {
+	data () {
+		return {
+			nickname: '',
+			player: null,
+			playerStats: null,
+			historyMatches: []
+		}
+	},
+	methods: {
+		getInfo () {
 			this.$Loading.start()
-      this.axios.get(api, {
-        params: {
-          nickname: this.nickname,
-          game: 'csgo'
-        },
+			this.axios.get(api, {
+				params: {
+					nickname: this.nickname,
+					game: 'csgo'
+				},
 				headers
-      })
-        .then(({ data }) => {
-          this.player = data
-
+			})
+				.then(({ data }) => {
+					this.player = data
 					this.axios.get(`${api}/${data.player_id}/stats/csgo`, { headers })
 						.then(({ data }) => {
 							this.playerStats = data
@@ -66,8 +65,8 @@ export default {
 						params: {
 							size: 150
 						}
-          })
-            .then(({ data }) => {
+					})
+						.then(({ data }) => {
 							this.historyMatches = []
 							data.forEach(item => {
 								this.historyMatches.push({
@@ -78,20 +77,20 @@ export default {
 									kad: `${item.i6}/${item.i7}/${item.i8}`,
 									result: item.i10 === '1' ? 'Win' : 'Lost',
 									map: item.i1,
-                  roomUrl: item.matchId
+									roomUrl: item.matchId
 								})
-              })
-            })
-        })
-        .then(() => this.$Loading.finish())
-    }
-  }
+							})
+						})
+				})
+				.then(() => this.$Loading.finish())
+		}
+	}
 }
 </script>
 
 <style>
-  .search-input {
-    width: 100%;
-    margin-right: 8px;
-  }
+.search-input {
+	width: 100%;
+	margin-right: 8px;
+}
 </style>
